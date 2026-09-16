@@ -1,39 +1,34 @@
 # Readmission Risk Project
 
-A machine learning model that predicts whether a diabetic patient will be readmitted to hospital — built with an interpretability analysis (what is the model actually keying on?) and a fairness audit (does it work equally well across patient subgroups?) rather than stopping at a single accuracy number.
+I'm exploring whether machine learning applied to real clinical data is something I want to build a career around — this project is part of a gap year spent testing that out, coming from a background in Cognitive Science with a specialization in machine learning and statistics. Rather than stopping at "the model works," the point here was to build something end-to-end: clean real (messy) hospital data, train and compare several models, understand *why* the best one makes the predictions it makes, and check whether it actually works fairly across different patient groups — the parts of the job that matter most before anything like this could touch real patient care.
 
-This is a personal gap-year project exploring medical data science as a possible master's direction, following the plan in [`docs/project-plan.md`](docs/project-plan.md).
+The model itself predicts whether a diabetic patient will be readmitted to hospital within 30 days of discharge.
+
+Full week-by-week plan and reasoning: [`docs/project-plan.md`](docs/project-plan.md).
 
 ## Dataset
 
 [Diabetes 130-US Hospitals for Years 1999–2008](https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008) (UCI Machine Learning Repository). Not committed to this repo — download it fresh from the link above into `data/` (already git-ignored).
 
-Fallback dataset if needed: [UCI Heart Disease (Cleveland)](https://archive.ics.uci.edu/dataset/45/heart+disease).
-
 ## Getting started
 
-Work happens in [Google Colab](https://colab.research.google.com/) — no local Python setup required. Open a new Colab notebook, upload the dataset, and go. Export finished notebooks into `notebooks/` in this repo to keep a record as you go (File → Download → Download .ipynb in Colab, then drop the file into this folder).
-
-If you'd rather run things locally instead of Colab:
+Everything runs in Jupyter notebooks via VS Code, using a local Python virtual environment:
 
 ```bash
-python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
-jupyter notebook
 ```
 
-## Progress
+Notebooks live in `notebooks/`, one per stage of the project (`week0_setup.ipynb` through `week5_fairness_audit.ipynb`), each runnable on its own from a fresh kernel.
 
-- [ ] Week 0 — Setup, data loaded
-- [ ] Week 1 — Cleaning + exploratory data analysis
-- [ ] Week 2 — Baseline models (logistic regression, decision tree)
-- [ ] Week 3 — Better models (random forest, gradient boosting) + cross-validation
-- [ ] Week 4 — Interpretability (SHAP)
-- [ ] Week 5 — Fairness / subgroup audit
-- [ ] Week 6 — Write-up + reflection
+## Key findings
 
-See [`docs/project-plan.md`](docs/project-plan.md) for the full week-by-week plan, including what each week is for and what it should produce.
+**Model performance:** logistic regression, random forest, and gradient boosting all landed within ~0.005 ROC-AUC of each other (~0.64), which suggests this feature set has a hard ceiling that model complexity alone can't push past — a good early lesson that better features usually beat fancier algorithms. Gradient boosting was selected as the final model (5-fold CV ROC-AUC: 0.644).
+
+**What drives the model's predictions (via SHAP):** prior hospitalization history (`number_inpatient`) is by far the strongest signal, followed by discharge destination — patients discharged to a skilled nursing facility or rehab center are predicted at meaningfully higher risk than those discharged home. Both line up with real clinical intuition.
+
+**Fairness audit:** the model shows a real, well-powered gap by gender — it catches about 54% of true readmissions among women but only 48% among men — and an even larger gap by age, catching 60-68% of true readmissions among patients over 70 but only 28-31% among patients 30-60, a difference too large to be explained by the modest gap in base readmission rates alone. Across race, the two largest groups (Caucasian, African American) performed similarly; results for smaller race groups weren't reliable enough to draw conclusions from given limited sample sizes. **Bottom line: this model would need real fixes — not just fairness reporting — before it could be trusted for equitable clinical use, since it currently under-flags real risk for men and for middle-aged patients specifically.**
 
 ## License
 
