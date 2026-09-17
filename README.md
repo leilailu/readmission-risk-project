@@ -1,6 +1,6 @@
 # Readmission Risk Project
 
-I'm exploring whether machine learning applied to real clinical data is something I want to build a career around — this project is part of a gap year spent testing that out, coming from a background in Cognitive Science with a specialization in machine learning and statistics. Rather than stopping at "the model works," the point here was to build something end-to-end: clean real (messy) hospital data, train and compare several models, understand *why* the best one makes the predictions it makes, and check whether it actually works fairly across different patient groups — the parts of the job that matter most before anything like this could touch real patient care.
+I'm exploring whether machine learning applied to real clinical data is something I want to build a career around, coming from a background in Cognitive Science with a specialization in machine learning and statistics. Rather than stopping at "the model works," the point here was to build something end-to-end: clean real (messy) hospital data, train and compare several models, understand *why* the best one makes the predictions it makes, and check whether it actually works fairly across different patient groups — the parts of the job that matter most before anything like this could touch real patient care.
 
 The model itself predicts whether a diabetic patient will be readmitted to hospital within 30 days of discharge.
 
